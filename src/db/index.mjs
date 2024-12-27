@@ -107,9 +107,10 @@ class DatabaseService {
             console.log(
                 `createConnection: Creating test connection with uri=${this.dbUri}`,
             );
-            this.connection = await mongoose
-                .createConnection(this.dbUri, this.databaseOpts)
-                .asPromise();
+            this.connection = await mongoose.connect(
+                this.dbUri,
+                this.databaseOpts,
+            );
             return this.connection;
         }
         if (!this.dbUri) {
@@ -124,19 +125,14 @@ class DatabaseService {
             console.log(
                 `createConnection: Creating new connection and caching it to ${secureUri}.`,
             );
-            this.connection = await mongoose
-                .createConnection(
-                    `${this.dbUri}${this.dbName}`,
-                    this.databaseOpts,
-                )
-                .asPromise();
-            const connectedDbName = this.connection.db.databaseName || null;
+            this.connection = await mongoose.connect(
+                `${this.dbUri}${this.dbName}`,
+                this.databaseOpts,
+            );
+            const connectedDbName = this.connection?.db || null;
             console.log(
                 `createConnection: Connection was created. Total of ${mongoose.connections.length} connections to host ${this.connection.host} with db ${connectedDbName}.`,
             );
-            this.connection.on("error", (err) => {
-                console.log(`Error occurred with established connection.`, err);
-            });
             return this.connection;
         }
         if (!this.isConnectionAlive(this.connection)) {
@@ -145,23 +141,18 @@ class DatabaseService {
             console.log(
                 `createConnection: Connection is not alive, creating new connection and caching it to ${secureUri}.`,
             );
-            this.connection = await mongoose
-                .createConnection(
-                    `${this.dbUri}${this.dbName}`,
-                    this.databaseOpts,
-                )
-                .asPromise();
-            const connectedDbName = this.connection.db.databaseName || null;
+            this.connection = await mongoose.connect(
+                `${this.dbUri}${this.dbName}`,
+                this.databaseOpts,
+            );
+            const connectedDbName = this.connection?.db || null;
             console.log(
                 `createConnection: Connection was created. Total of ${mongoose.connections.length} connections to host ${this.connection.host} with db ${connectedDbName}.`,
             );
-            this.connection.on("error", (err) => {
-                console.log(`Error occurred with established connection.`, err);
-            });
             return this.connection;
         }
         // Connection is cached in memory so use it.
-        const connectedDbName = this.connection.db.databaseName || null;
+        const connectedDbName = this.connection?.db || null;
         console.log(
             `Using cached connection. Total of ${mongoose.connections.length} connections to host ${this.connection.host} with db ${connectedDbName}.`,
         );

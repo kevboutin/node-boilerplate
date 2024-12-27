@@ -1,5 +1,5 @@
 import MongooseQuery from "../mongooseQuery.mjs";
-import { AuditLog } from "../models/index.mjs";
+//import { AuditLog } from "../models/index.mjs";
 
 /**
  * @class AuditLogRepository
@@ -8,12 +8,10 @@ class AuditLogRepository {
     /**
      * Creates the repository for auditLog.
      *
-     * @param {Connection} connection The database connection.
+     * @param {Object} model The database model.
      */
-    constructor(connection) {
-        // this.model = connection.models["AuditLog"];
-        this.model = AuditLog;
-        this.connection = connection;
+    constructor(model) {
+        this.model = model;
     }
 
     static get CREATE() {
@@ -90,13 +88,16 @@ class AuditLogRepository {
             }
         }
 
-        const rows = await this.model
-            .find(query.criteria)
-            .skip(query.skip)
-            .limit(query.limit)
-            .sort(query.sort);
-
-        const count = await this.model.countDocuments(query.criteria);
+        const [rows, count] = await Promise.all([
+            this.model
+                .find(query.criteria)
+                .skip(query.skip)
+                .limit(query.limit)
+                .collation({ locale: "en" })
+                .sort(query.sort)
+                .exec(),
+            this.model.countDocuments(query.criteria).exec(),
+        ]);
 
         return { count, rows };
     }

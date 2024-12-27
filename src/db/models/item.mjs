@@ -5,7 +5,8 @@ const ItemSchema = new Schema(
         name: { type: String, required: true, unique: true },
         description: { type: String, required: false },
     },
-    { timestamps: true },
+    { timestamps: true, collection: "items" },
 );
 
-export default mongoose.model("Item", ItemSchema);
+const Item = mongoose.model("Item", ItemSchema);
+export default Item;

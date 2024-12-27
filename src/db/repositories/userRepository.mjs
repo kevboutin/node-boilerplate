@@ -1,6 +1,6 @@
 import MongooseQuery from "../mongooseQuery.mjs";
 import AuditLogRepository from "./auditLogRepository.mjs";
-import { User } from "../models/index.mjs";
+import { AuditLog } from "../models/index.mjs";
 
 /**
  * @class UserRepository
@@ -10,12 +10,11 @@ class UserRepository {
      * Creates a user repository.
      *
      * @constructor
-     * @param {Connection} connection The database connection.
+     * @param {Object} model The database model.
      */
-    constructor(connection) {
-        // this.model = connection.models["User"];
-        this.model = User;
-        this.auditLogRepository = new AuditLogRepository(connection);
+    constructor(model) {
+        this.model = model;
+        this.auditLogRepository = new AuditLogRepository(AuditLog);
         this.connection = connection;
     }
 
@@ -27,12 +26,14 @@ class UserRepository {
      * @returns {Promise<Object>} The newly created document.
      */
     async create(data, currentUser) {
-        // await this.model.createCollection();
-        const [record] = await this.model.create([
-            {
-                ...data,
-            },
-        ]);
+        await this.model.createCollection();
+        const [record] = await this.model
+            .create([
+                {
+                    ...data,
+                },
+            ])
+            .exec();
 
         await this.auditLogRepository.log(
             {
@@ -44,7 +45,7 @@ class UserRepository {
             currentUser,
         );
 
-        return await this.findById(record._id, options);
+        return await this.findById(record._id, options).exec();
     }
 
     /**
@@ -56,14 +57,16 @@ class UserRepository {
      * @returns {Promise<Object>} The updated document.
      */
     async update(id, data, currentUser) {
-        await this.model.updateOne(
-            { _id: id },
-            {
-                ...data,
-            },
-        );
+        await this.model
+            .updateOne(
+                { _id: id },
+                {
+                    ...data,
+                },
+            )
+            .exec();
 
-        const record = await this.findById(id);
+        const record = await this.findById(id).exec();
         await this.auditLogRepository.log(
             {
                 action: AuditLogRepository.UPDATE,
@@ -83,7 +86,7 @@ class UserRepository {
      * @param {Object} currentUser The current user.
      */
     async destroy(id, currentUser) {
-        await this.model.deleteOne({ _id: id });
+        await this.model.deleteOne({ _id: id }).exec();
         await this.auditLogRepository.log(
             {
                 action: AuditLogRepository.DELETE,
@@ -102,7 +105,7 @@ class UserRepository {
      * @returns {Promise<number>} A Promise to return the count.
      */
     async count(filter) {
-        return await this.model.countDocuments(filter);
+        return await this.model.countDocuments(filter).exec();
     }
 
     /**
@@ -112,7 +115,7 @@ class UserRepository {
      * @returns {Promise<Object>} A Promise to return a role document.
      */
     async findById(id) {
-        return await this.model.findById(id);
+        return await this.model.findById(id).exec();
     }
 
     /**
@@ -122,7 +125,7 @@ class UserRepository {
      * @returns {Promise<Array<Object>>} A Promise to return an array of matching documents.
      */
     async findByName(name) {
-        return await this.model.find({ name: name });
+        return await this.model.find({ name: name }).exec();
     }
 
     /**
@@ -133,7 +136,7 @@ class UserRepository {
      * @returns {Promise<Array<Object>>} A Promise to return an array of matching documents.
      */
     async findByNameAndNotId(name, id) {
-        return await this.model.find({ name: name, _id: { $ne: id } });
+        return await this.model.find({ name: name, _id: { $ne: id } }).exec();
     }
 
     /**
@@ -174,14 +177,16 @@ class UserRepository {
             }
         }
 
-        const rows = await this.model
-            .find(query.criteria)
-            .skip(query.skip)
-            .limit(query.limit)
-            .collation({ locale: "en" })
-            .sort(query.sort);
-
-        const count = await this.model.countDocuments(query.criteria);
+        const [rows, count] = await Promise.all([
+            this.model
+                .find(query.criteria)
+                .skip(query.skip)
+                .limit(query.limit)
+                .collation({ locale: "en" })
+                .sort(query.sort)
+                .exec(),
+            this.model.countDocuments(query.criteria).exec(),
+        ]);
 
         return { count, rows };
     }
@@ -217,7 +222,8 @@ class UserRepository {
             .find(query.criteria)
             .limit(query.limit)
             .collation({ locale: "en" })
-            .sort(query.sort);
+            .sort(query.sort)
+            .exec();
 
         return records.map((record) => ({
             _id: record._id,

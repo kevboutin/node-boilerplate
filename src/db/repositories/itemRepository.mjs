@@ -1,6 +1,6 @@
 import MongooseQuery from "../mongooseQuery.mjs";
 import AuditLogRepository from "./auditLogRepository.mjs";
-import { Item } from "../models/index.mjs";
+import { AuditLog } from "../models/index.mjs";
 
 /**
  * @class ItemRepository
@@ -10,13 +10,11 @@ class ItemRepository {
      * Creates an item repository.
      *
      * @constructor
-     * @param {Connection} connection The database connection.
+     * @param {Object} model The database model.
      */
-    constructor(connection) {
-        // this.model = connection.models["Item"];
-        this.model = Item;
-        this.auditLogRepository = new AuditLogRepository(connection);
-        this.connection = connection;
+    constructor(model) {
+        this.model = model;
+        this.auditLogRepository = new AuditLogRepository(AuditLog);
     }
 
     /**
@@ -27,7 +25,7 @@ class ItemRepository {
      * @returns {Promise<Object>} The newly created document.
      */
     async create(data, currentUser) {
-        // await this.model.createCollection();
+        await this.model.createCollection();
         const [record] = await this.model.create([
             {
                 ...data,
@@ -44,7 +42,7 @@ class ItemRepository {
             currentUser,
         );
 
-        return await this.findById(record._id, options);
+        return await this.findById(record._id, options).exec();
     }
 
     /**
@@ -56,12 +54,14 @@ class ItemRepository {
      * @returns {Promise<Object>} The updated document.
      */
     async update(id, data, currentUser) {
-        await this.model.updateOne(
-            { _id: id },
-            {
-                ...data,
-            },
-        );
+        await this.model
+            .updateOne(
+                { _id: id },
+                {
+                    ...data,
+                },
+            )
+            .exec();
 
         const record = await this.findById(id);
         await this.auditLogRepository.log(
@@ -83,7 +83,7 @@ class ItemRepository {
      * @param {Object} currentUser The current user.
      */
     async destroy(id, currentUser) {
-        await this.model.deleteOne({ _id: id });
+        await this.model.deleteOne({ _id: id }).exec();
         await this.auditLogRepository.log(
             {
                 action: AuditLogRepository.DELETE,
@@ -102,7 +102,7 @@ class ItemRepository {
      * @returns {Promise<number>} A Promise to return the count.
      */
     async count(filter) {
-        return await this.model.countDocuments(filter);
+        return await this.model.countDocuments(filter).exec();
     }
 
     /**
@@ -122,7 +122,7 @@ class ItemRepository {
      * @returns {Promise<Array<Object>>} A Promise to return an array of matching documents.
      */
     async findByName(name) {
-        return await this.model.find({ name: name });
+        return await this.model.find({ name: name }).exec();
     }
 
     /**
@@ -133,7 +133,7 @@ class ItemRepository {
      * @returns {Promise<Array<Object>>} A Promise to return an array of matching documents.
      */
     async findByNameAndNotId(name, id) {
-        return await this.model.find({ name: name, _id: { $ne: id } });
+        return await this.model.find({ name: name, _id: { $ne: id } }).exec();
     }
 
     /**
@@ -166,22 +166,24 @@ class ItemRepository {
             }
 
             if (filter.name) {
-                query.appendIlike("name", filter.name);
+                query.appendILike("name", filter.name);
             }
 
             if (filter.description) {
-                query.appendIlike("description", filter.description);
+                query.appendILike("description", filter.description);
             }
         }
 
-        const rows = await this.model
-            .find(query.criteria)
-            .skip(query.skip)
-            .limit(query.limit)
-            .collation({ locale: "en" })
-            .sort(query.sort);
-
-        const count = await this.model.countDocuments(query.criteria);
+        const [rows, count] = await Promise.all([
+            this.model
+                .find(query.criteria)
+                .skip(query.skip)
+                .limit(query.limit)
+                .collation({ locale: "en" })
+                .sort(query.sort)
+                .exec(),
+            this.model.countDocuments(query.criteria).exec(),
+        ]);
 
         return { count, rows };
     }
@@ -217,7 +219,8 @@ class ItemRepository {
             .find(query.criteria)
             .limit(query.limit)
             .collation({ locale: "en" })
-            .sort(query.sort);
+            .sort(query.sort)
+            .exec();
 
         return records.map((record) => ({
             _id: record._id,

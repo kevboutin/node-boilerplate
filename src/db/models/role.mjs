@@ -5,7 +5,8 @@ const RoleSchema = new Schema(
         name: { type: String, required: true, unique: true },
         description: { type: String, required: false },
     },
-    { timestamps: true },
+    { timestamps: true, collection: "roles" },
 );
 
-export default mongoose.model("Role", RoleSchema);
+const Role = mongoose.model("Role", RoleSchema);
+export default Role;

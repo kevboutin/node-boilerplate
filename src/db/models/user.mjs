@@ -9,7 +9,8 @@ const UserSchema = new Schema(
         timezone: { type: String, required: false },
         verifiedEmail: { type: Boolean, default: false },
     },
-    { timestamps: true },
+    { timestamps: true, collection: "users" },
 );
 
-export default mongoose.model("User", UserSchema);
+const User = mongoose.model("User", UserSchema);
+export default User;

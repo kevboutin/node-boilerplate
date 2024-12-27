@@ -2,6 +2,7 @@ import * as HttpStatusCodes from "../../httpStatusCodes.mjs";
 import * as HttpStatusPhrases from "../../httpStatusPhrases.mjs";
 import DatabaseService from "../../db/index.mjs";
 import env from "../../env.mjs";
+import { Item } from "../../db/models/index.mjs";
 import ItemRepository from "../../db/repositories/itemRepository.mjs";
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "../../constants.mjs";
 
@@ -9,12 +10,13 @@ const db = new DatabaseService({
     dbUri: env.DB_URL,
     dbName: env.DB_NAME,
 });
-const connection = db.createConnection();
-const itemRepository = new ItemRepository(connection);
+const _ = await db.createConnection();
+const itemRepository = new ItemRepository(Item);
 
 export const list = async (c) => {
     try {
-        const { count, rows } = await itemRepository.findAndCountAll({});
+        const result = await Promise.resolve(itemRepository.findAndCountAll());
+        const { count, rows } = result;
         console.log(`list: Found ${count} items.`);
         return c.json({ count, rows });
     } catch (error) {
@@ -32,7 +34,10 @@ export const list = async (c) => {
 export const create = async (c) => {
     const item = c.req.valid("json");
     try {
-        const inserted = await itemRepository.create(item, {});
+        const inserted = await itemRepository.create(item, {
+            createdById: "dummy",
+            createdByEmail: "dummy@gmail.com",
+        });
         console.log(`create: Created item with name=${item.name}.`);
         return c.json(inserted, HttpStatusCodes.CREATED);
     } catch (error) {
@@ -119,7 +124,10 @@ export const patch = async (c) => {
         );
     }
     try {
-        const item = await itemRepository.update(id, updates, {});
+        const item = await itemRepository.update(id, updates, {
+            createdById: "dummy",
+            createdByEmail: "dummy@gmail.com",
+        });
         if (!item) {
             console.log(`patch: Could not find item with identifier=${id}.`);
             return c.json(
@@ -168,6 +176,10 @@ export const remove = async (c) => {
                 HttpStatusCodes.NOT_FOUND,
             );
         }
+        await itemRepository.destroy(id, {
+            createdById: "dummy",
+            createdByEmail: "dummy@gmail.com",
+        });
         console.log(`remove: Removed item with identifier=${id}.`);
         return c.body(null, HttpStatusCodes.NO_CONTENT);
     } catch (error) {
