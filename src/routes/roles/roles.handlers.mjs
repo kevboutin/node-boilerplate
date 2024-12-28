@@ -19,7 +19,7 @@ export const list = async (c) => {
             roleRepository.findAndCountAll({}),
         );
         const { count, rows } = result;
-        console.log(`list: Found ${count} role(s).`);
+        c.var.logger.info(`list: Found ${count} role(s).`);
         return c.json({ count, rows });
     } catch (error) {
         console.error(`list: Unable to query successfully.`, error);
@@ -40,7 +40,7 @@ export const create = async (c) => {
             createdById: "dummy",
             createdByEmail: "dummy@gmail.com",
         });
-        console.log(`create: Created role with name=${role.name}.`);
+        c.var.logger.info(`create: Created role with name=${role.name}.`);
         return c.json(inserted, HttpStatusCodes.CREATED);
     } catch (error) {
         console.error(`create: Unable to create role.`, error);
@@ -57,7 +57,7 @@ export const create = async (c) => {
 export const getOne = async (c) => {
     const { id } = c.req.valid("param");
     if (id.length !== 24) {
-        console.log(`getOne: Identifier ${id} is not a valid value.`);
+        c.var.logger.info(`getOne: Identifier ${id} is not a valid value.`);
         return c.json(
             {
                 message: HttpStatusPhrases.BAD_REQUEST,
@@ -69,7 +69,9 @@ export const getOne = async (c) => {
     try {
         const role = await roleRepository.findById(id);
         if (!role) {
-            console.log(`getOne: Could not find role with identifier=${id}.`);
+            c.var.logger.info(
+                `getOne: Could not find role with identifier=${id}.`,
+            );
             return c.json(
                 {
                     message: HttpStatusPhrases.NOT_FOUND,
@@ -78,10 +80,10 @@ export const getOne = async (c) => {
                 HttpStatusCodes.NOT_FOUND,
             );
         }
-        console.log(`getOne: Found role with identifier=${id}.`);
+        c.var.logger.info(`getOne: Found role with identifier=${id}.`);
         return c.json(role, HttpStatusCodes.OK);
     } catch (error) {
-        console.error(`getOne: Unable to query successfully.`, error);
+        c.var.logger.error(`getOne: Unable to query successfully.`, error);
         return c.json(
             {
                 message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,
@@ -95,7 +97,7 @@ export const getOne = async (c) => {
 export const patch = async (c) => {
     const { id } = c.req.valid("param");
     if (id.length !== 24) {
-        console.log(`patch: Identifier ${id} is not a valid value.`);
+        c.var.logger.info(`patch: Identifier ${id} is not a valid value.`);
         return c.json(
             {
                 message: HttpStatusPhrases.BAD_REQUEST,
@@ -130,7 +132,9 @@ export const patch = async (c) => {
             createdByEmail: "dummy@gmail.com",
         });
         if (!role) {
-            console.log(`patch: Could not find role with identifier=${id}.`);
+            c.var.logger.info(
+                `patch: Could not find role with identifier=${id}.`,
+            );
             return c.json(
                 {
                     message: HttpStatusPhrases.NOT_FOUND,
@@ -139,10 +143,10 @@ export const patch = async (c) => {
                 HttpStatusCodes.NOT_FOUND,
             );
         }
-        console.log(`patch: Updated role with identifier=${id}.`);
+        c.var.logger.info(`patch: Updated role with identifier=${id}.`);
         return c.json(role, HttpStatusCodes.OK);
     } catch (error) {
-        console.error(`patch: Unable to update successfully.`, error);
+        c.var.logger.error(`patch: Unable to update successfully.`, error);
         return c.json(
             {
                 message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,
@@ -156,7 +160,7 @@ export const patch = async (c) => {
 export const remove = async (c) => {
     const { id } = c.req.valid("param");
     if (id.length !== 24) {
-        console.log(`remove: Identifier ${id} is not a valid value.`);
+        c.var.logger.info(`remove: Identifier ${id} is not a valid value.`);
         return c.json(
             {
                 message: HttpStatusPhrases.BAD_REQUEST,
@@ -168,7 +172,9 @@ export const remove = async (c) => {
     try {
         const role = await roleRepository.findById(id);
         if (!role) {
-            console.log(`remove: Could not find role with identifier=${id}.`);
+            c.var.logger.info(
+                `remove: Could not find role with identifier=${id}.`,
+            );
             return c.json(
                 {
                     message: HttpStatusPhrases.NOT_FOUND,
@@ -181,10 +187,10 @@ export const remove = async (c) => {
             createdById: "dummy",
             createdByEmail: "dummy@gmail.com",
         });
-        console.log(`remove: Removed role with identifier=${id}.`);
+        c.var.logger.info(`remove: Removed role with identifier=${id}.`);
         return c.body(null, HttpStatusCodes.NO_CONTENT);
     } catch (error) {
-        console.error(`remove: Unable to remove successfully.`, error);
+        c.var.logger.error(`remove: Unable to remove successfully.`, error);
         return c.json(
             {
                 message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,

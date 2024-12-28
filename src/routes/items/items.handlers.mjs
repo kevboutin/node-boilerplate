@@ -17,10 +17,10 @@ export const list = async (c) => {
     try {
         const result = await Promise.resolve(itemRepository.findAndCountAll());
         const { count, rows } = result;
-        console.log(`list: Found ${count} item(s).`);
+        c.var.logger.info(`list: Found ${count} item(s).`);
         return c.json({ count, rows });
     } catch (error) {
-        console.error(`list: Unable to query successfully.`, error);
+        c.var.logger.error(`list: Unable to query successfully.`, error);
         return c.json(
             {
                 message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,
@@ -38,10 +38,10 @@ export const create = async (c) => {
             createdById: "dummy",
             createdByEmail: "dummy@gmail.com",
         });
-        console.log(`create: Created item with name=${item.name}.`);
+        c.var.logger.info(`create: Created item with name=${item.name}.`);
         return c.json(inserted, HttpStatusCodes.CREATED);
     } catch (error) {
-        console.error(`create: Unable to create item.`, error);
+        c.var.logger.error(`create: Unable to create item.`, error);
         return c.json(
             {
                 message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,
@@ -55,7 +55,7 @@ export const create = async (c) => {
 export const getOne = async (c) => {
     const { id } = c.req.valid("param");
     if (id.length !== 24) {
-        console.log(`getOne: Identifier ${id} is not a valid value.`);
+        c.var.logger.info(`getOne: Identifier ${id} is not a valid value.`);
         return c.json(
             {
                 message: HttpStatusPhrases.BAD_REQUEST,
@@ -67,7 +67,9 @@ export const getOne = async (c) => {
     try {
         const item = await itemRepository.findById(id);
         if (!item) {
-            console.log(`getOne: Could not find item with identifier=${id}.`);
+            c.var.logger.info(
+                `getOne: Could not find item with identifier=${id}.`,
+            );
             return c.json(
                 {
                     message: HttpStatusPhrases.NOT_FOUND,
@@ -76,10 +78,10 @@ export const getOne = async (c) => {
                 HttpStatusCodes.NOT_FOUND,
             );
         }
-        console.log(`getOne: Found item with identifier=${id}.`);
+        c.var.logger.info(`getOne: Found item with identifier=${id}.`);
         return c.json(item, HttpStatusCodes.OK);
     } catch (error) {
-        console.error(`getOne: Unable to query successfully.`, error);
+        c.var.logger.error(`getOne: Unable to query successfully.`, error);
         return c.json(
             {
                 message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,
@@ -93,7 +95,7 @@ export const getOne = async (c) => {
 export const patch = async (c) => {
     const { id } = c.req.valid("param");
     if (id.length !== 24) {
-        console.log(`patch: Identifier ${id} is not a valid value.`);
+        c.var.logger.info(`patch: Identifier ${id} is not a valid value.`);
         return c.json(
             {
                 message: HttpStatusPhrases.BAD_REQUEST,
@@ -128,7 +130,9 @@ export const patch = async (c) => {
             createdByEmail: "dummy@gmail.com",
         });
         if (!item) {
-            console.log(`patch: Could not find item with identifier=${id}.`);
+            c.var.logger.info(
+                `patch: Could not find item with identifier=${id}.`,
+            );
             return c.json(
                 {
                     message: HttpStatusPhrases.NOT_FOUND,
@@ -137,10 +141,10 @@ export const patch = async (c) => {
                 HttpStatusCodes.NOT_FOUND,
             );
         }
-        console.log(`patch: Updated item with identifier=${id}.`);
+        c.var.logger.info(`patch: Updated item with identifier=${id}.`);
         return c.json(item, HttpStatusCodes.OK);
     } catch (error) {
-        console.error(`patch: Unable to update successfully.`, error);
+        c.var.logger.error(`patch: Unable to update successfully.`, error);
         return c.json(
             {
                 message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,
@@ -154,7 +158,7 @@ export const patch = async (c) => {
 export const remove = async (c) => {
     const { id } = c.req.valid("param");
     if (id.length !== 24) {
-        console.log(`remove: Identifier ${id} is not a valid value.`);
+        c.var.logger.info(`remove: Identifier ${id} is not a valid value.`);
         return c.json(
             {
                 message: HttpStatusPhrases.BAD_REQUEST,
@@ -166,7 +170,9 @@ export const remove = async (c) => {
     try {
         const item = await itemRepository.findById(id);
         if (!item) {
-            console.log(`remove: Could not find item with identifier=${id}.`);
+            c.var.logger.info(
+                `remove: Could not find item with identifier=${id}.`,
+            );
             return c.json(
                 {
                     message: HttpStatusPhrases.NOT_FOUND,
@@ -179,10 +185,10 @@ export const remove = async (c) => {
             createdById: "dummy",
             createdByEmail: "dummy@gmail.com",
         });
-        console.log(`remove: Removed item with identifier=${id}.`);
+        c.var.logger.info(`remove: Removed item with identifier=${id}.`);
         return c.body(null, HttpStatusCodes.NO_CONTENT);
     } catch (error) {
-        console.error(`remove: Unable to remove successfully.`, error);
+        c.var.logger.error(`remove: Unable to remove successfully.`, error);
         return c.json(
             {
                 message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,

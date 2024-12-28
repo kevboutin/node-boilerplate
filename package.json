@@ -22,11 +22,12 @@
         "release:tag": "git tag $npm_package_version && git push --tags",
         "test": "npm run test:lint && npm run test:unit",
         "test:lint": "npx lint-staged",
-        "test:unit": "npx cross-env NODE_ENV=test vitest --testTimeout=11000 --silent --coverage"
+        "test:unit": "npx cross-env NODE_ENV=test vitest run --testTimeout=11000 --silent --coverage"
     },
     "dependencies": {
         "@hono/node-server": "^1.13.7",
         "@hono/zod-openapi": "^0.18.3",
+        "@scalar/hono-api-reference": "^0.5.165",
         "dotenv": "^16.4.7",
         "dotenv-expand": "^12.0.1",
         "hono": "^4.6.14",

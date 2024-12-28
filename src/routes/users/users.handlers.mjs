@@ -18,10 +18,10 @@ export const list = async (c) => {
         const { count, rows } = await Promise.resolve(
             userRepository.findAndCountAll({}),
         );
-        console.log(`list: Found ${count} users.`);
+        c.var.logger.info(`list: Found ${count} users.`);
         return c.json({ count, rows });
     } catch (error) {
-        console.error(`list: Unable to query successfully.`, error);
+        c.var.logger.error(`list: Unable to query successfully.`, error);
         return c.json(
             {
                 message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,
@@ -39,7 +39,9 @@ export const create = async (c) => {
             createdById: "dummy",
             createdByEmail: "dummy@gmail.com",
         });
-        console.log(`create: Created user with username=${user.username}.`);
+        c.var.logger.info(
+            `create: Created user with username=${user.username}.`,
+        );
         return c.json(inserted, HttpStatusCodes.CREATED);
     } catch (error) {
         console.error(`create: Unable to create user.`, error);
@@ -56,7 +58,7 @@ export const create = async (c) => {
 export const getOne = async (c) => {
     const { id } = c.req.valid("param");
     if (id.length !== 24) {
-        console.log(`getOne: Identifier ${id} is not a valid value.`);
+        c.var.logger.info(`getOne: Identifier ${id} is not a valid value.`);
         return c.json(
             {
                 message: HttpStatusPhrases.BAD_REQUEST,
@@ -68,7 +70,9 @@ export const getOne = async (c) => {
     try {
         const user = await userRepository.findById(id);
         if (!user) {
-            console.log(`getOne: Could not find user with identifier=${id}.`);
+            c.var.logger.info(
+                `getOne: Could not find user with identifier=${id}.`,
+            );
             return c.json(
                 {
                     message: HttpStatusPhrases.NOT_FOUND,
@@ -77,10 +81,10 @@ export const getOne = async (c) => {
                 HttpStatusCodes.NOT_FOUND,
             );
         }
-        console.log(`getOne: Found user with identifier=${id}.`);
+        c.var.logger.info(`getOne: Found user with identifier=${id}.`);
         return c.json(user, HttpStatusCodes.OK);
     } catch (error) {
-        console.error(`getOne: Unable to query successfully.`, error);
+        c.var.logger.error(`getOne: Unable to query successfully.`, error);
         return c.json(
             {
                 message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,
@@ -94,7 +98,7 @@ export const getOne = async (c) => {
 export const patch = async (c) => {
     const { id } = c.req.valid("param");
     if (id.length !== 24) {
-        console.log(`patch: Identifier ${id} is not a valid value.`);
+        c.var.logger.info(`patch: Identifier ${id} is not a valid value.`);
         return c.json(
             {
                 message: HttpStatusPhrases.BAD_REQUEST,
@@ -129,7 +133,9 @@ export const patch = async (c) => {
             createdByEmail: "dummy@gmail.com",
         });
         if (!user) {
-            console.log(`patch: Could not find user with identifier=${id}.`);
+            c.var.logger.info(
+                `patch: Could not find user with identifier=${id}.`,
+            );
             return c.json(
                 {
                     message: HttpStatusPhrases.NOT_FOUND,
@@ -138,10 +144,10 @@ export const patch = async (c) => {
                 HttpStatusCodes.NOT_FOUND,
             );
         }
-        console.log(`patch: Updated user with identifier=${id}.`);
+        c.var.logger.info(`patch: Updated user with identifier=${id}.`);
         return c.json(user, HttpStatusCodes.OK);
     } catch (error) {
-        console.error(`patch: Unable to update successfully.`, error);
+        c.var.logger.error(`patch: Unable to update successfully.`, error);
         return c.json(
             {
                 message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,
@@ -155,7 +161,7 @@ export const patch = async (c) => {
 export const remove = async (c) => {
     const { id } = c.req.valid("param");
     if (id.length !== 24) {
-        console.log(`remove: Identifier ${id} is not a valid value.`);
+        c.var.logger.info(`remove: Identifier ${id} is not a valid value.`);
         return c.json(
             {
                 message: HttpStatusPhrases.BAD_REQUEST,
@@ -167,7 +173,9 @@ export const remove = async (c) => {
     try {
         const user = await userRepository.findById(id);
         if (!user) {
-            console.log(`remove: Could not find user with identifier=${id}.`);
+            c.var.logger.info(
+                `remove: Could not find user with identifier=${id}.`,
+            );
             return c.json(
                 {
                     message: HttpStatusPhrases.NOT_FOUND,
@@ -180,10 +188,10 @@ export const remove = async (c) => {
             createdById: "dummy",
             createdByEmail: "dummy@gmail.com",
         });
-        console.log(`remove: Removed user with identifier=${id}.`);
+        c.var.logger.info(`remove: Removed user with identifier=${id}.`);
         return c.body(null, HttpStatusCodes.NO_CONTENT);
     } catch (error) {
-        console.error(`remove: Unable to remove successfully.`, error);
+        c.var.logger.error(`remove: Unable to remove successfully.`, error);
         return c.json(
             {
                 message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,

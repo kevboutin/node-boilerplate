@@ -13,7 +13,7 @@ import {
     createErrorSchema,
     IdParamsSchema,
 } from "../../openapi/schemas/index.mjs";
-import { notFoundSchema } from "../../constants.mjs";
+import { notFoundSchema, badRequestSchema } from "../../constants.mjs";
 
 const tags = ["users"];
 
@@ -37,7 +37,10 @@ export const create = createRoute({
     },
     tags,
     responses: {
-        [HttpStatusCodes.OK]: jsonContent(selectUserSchema, "The created user"),
+        [HttpStatusCodes.CREATED]: jsonContent(
+            selectUserSchema,
+            "The created user",
+        ),
         [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
             createErrorSchema(insertUserSchema),
             "The validation error(s)",
@@ -56,6 +59,10 @@ export const getOne = createRoute({
         [HttpStatusCodes.OK]: jsonContent(
             selectUserSchema,
             "The requested user",
+        ),
+        [HttpStatusCodes.BAD_REQUEST]: jsonContent(
+            badRequestSchema,
+            "The request is not valid",
         ),
         [HttpStatusCodes.NOT_FOUND]: jsonContent(
             notFoundSchema,
@@ -78,6 +85,10 @@ export const patch = createRoute({
     tags,
     responses: {
         [HttpStatusCodes.OK]: jsonContent(selectUserSchema, "The updated user"),
+        [HttpStatusCodes.BAD_REQUEST]: jsonContent(
+            badRequestSchema,
+            "The request is not valid",
+        ),
         [HttpStatusCodes.NOT_FOUND]: jsonContent(
             notFoundSchema,
             "User not found",
@@ -102,6 +113,10 @@ export const remove = createRoute({
         [HttpStatusCodes.NO_CONTENT]: {
             description: "User deleted",
         },
+        [HttpStatusCodes.BAD_REQUEST]: jsonContent(
+            badRequestSchema,
+            "The request is not valid",
+        ),
         [HttpStatusCodes.NOT_FOUND]: jsonContent(
             notFoundSchema,
             "User not found",

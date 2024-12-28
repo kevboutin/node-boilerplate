@@ -131,7 +131,7 @@ class DatabaseService {
             );
             const connectedDbName = this.connection?.db || null;
             console.log(
-                `createConnection: Connection was created. Total of ${mongoose.connections.length} connections to host ${this.connection.host} with db ${connectedDbName}.`,
+                `createConnection: Connection was created. Total of ${mongoose.connections.length} connections to host ${this.connection.host}.`,
             );
             return this.connection;
         }
@@ -147,14 +147,14 @@ class DatabaseService {
             );
             const connectedDbName = this.connection?.db || null;
             console.log(
-                `createConnection: Connection was created. Total of ${mongoose.connections.length} connections to host ${this.connection.host} with db ${connectedDbName}.`,
+                `createConnection: Connection was created. Total of ${mongoose.connections.length} connections to host ${this.connection.host}.`,
             );
             return this.connection;
         }
         // Connection is cached in memory so use it.
         const connectedDbName = this.connection?.db || null;
         console.log(
-            `Using cached connection. Total of ${mongoose.connections.length} connections to host ${this.connection.host} with db ${connectedDbName}.`,
+            `Using cached connection. Total of ${mongoose.connections.length} connections to host ${this.connection.host}.`,
         );
         return this.connection;
     }
