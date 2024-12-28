@@ -42,7 +42,7 @@ class ItemRepository {
             currentUser,
         );
 
-        return await this.findById(record._id, options).exec();
+        return await this.findById(record._id);
     }
 
     /**

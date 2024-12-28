@@ -44,7 +44,7 @@ class RoleRepository {
             currentUser,
         );
 
-        return await this.findById(record._id, options).exec();
+        return await this.findById(record._id);
     }
 
     /**
@@ -65,7 +65,7 @@ class RoleRepository {
             )
             .exec();
 
-        const record = await this.findById(id).exec();
+        const record = await this.findById(id);
         await this.auditLogRepository.log(
             {
                 action: AuditLogRepository.UPDATE,
@@ -114,7 +114,7 @@ class RoleRepository {
      * @returns {Promise<Object>} A Promise to return a role document.
      */
     async findById(id) {
-        return await this.model.findById(id).exec();
+        return await this.model.findById(id);
     }
 
     /**

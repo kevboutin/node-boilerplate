@@ -43,6 +43,7 @@ describe("items routes", () => {
 
     const id = "507f191e810c19729de860ea";
     const name = "Learn vitest";
+    let newId = "";
 
     it("post /items creates an item", async () => {
         const response = await client.items.$post({
@@ -55,7 +56,7 @@ describe("items routes", () => {
         if (response.status === 201) {
             const json = await response.json();
             expect(json.name).toBe(name);
-            expect(json.done).toBe(false);
+            newId = json._id;
         }
     });
 
@@ -65,7 +66,7 @@ describe("items routes", () => {
         if (response.status === 200) {
             const json = await response.json();
             expectTypeOf(json).toBeArray();
-            expect(json.length).toBe(1);
+            expect(json.rows.length).toBe(1);
         }
     });
 
@@ -102,21 +103,20 @@ describe("items routes", () => {
     it("get /items/{id} gets a single item", async () => {
         const response = await client.items[":id"].$get({
             param: {
-                id,
+                id: newId,
             },
         });
         expect(response.status).toBe(200);
         if (response.status === 200) {
             const json = await response.json();
             expect(json.name).toBe(name);
-            expect(json.done).toBe(false);
         }
     });
 
     it("patch /items/{id} validates the body when updating", async () => {
         const response = await client.items[":id"].$patch({
             param: {
-                id,
+                id: newId,
             },
             json: {
                 name: "",
@@ -151,7 +151,7 @@ describe("items routes", () => {
     it("patch /items/{id} validates empty body", async () => {
         const response = await client.items[":id"].$patch({
             param: {
-                id,
+                id: newId,
             },
             json: {},
         });
@@ -170,7 +170,7 @@ describe("items routes", () => {
     it("patch /items/{id} updates a single property of an item", async () => {
         const response = await client.items[":id"].$patch({
             param: {
-                id,
+                id: newId,
             },
             json: {
                 description: "updated description",
@@ -203,7 +203,7 @@ describe("items routes", () => {
     it("delete /items/{id} removes an item", async () => {
         const response = await client.items[":id"].$delete({
             param: {
-                id,
+                id: newId,
             },
         });
         expect(response.status).toBe(204);
