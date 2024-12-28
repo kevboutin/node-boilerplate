@@ -12,7 +12,7 @@ import { ZodIssueCode } from "zod";
 import env from "../../env.mjs";
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "../../constants.mjs";
 import createApp from "../../createApp.mjs";
-import router from "./items.index.mjs";
+import router from "./users.index.mjs";
 
 if (env.NODE_ENV !== "test") {
     throw new Error("NODE_ENV must be 'test'");
@@ -20,21 +20,21 @@ if (env.NODE_ENV !== "test") {
 
 const client = testClient(createApp().route("/", router));
 
-describe("items routes", () => {
+describe("users routes", () => {
     beforeAll(async () => {});
 
     afterAll(async () => {});
 
-    it("post /items validates the body when creating", async () => {
-        const response = await client.items.$post({
+    it("post /users validates the body when creating", async () => {
+        const response = await client.users.$post({
             json: {
-                description: "some description",
+                email: "someuser@github.com",
             },
         });
         expect(response.status).toBe(422);
         if (response.status === 422) {
             const json = await response.json();
-            expect(json.error.issues[0].path[0]).toBe("name");
+            expect(json.error.issues[0].path[0]).toBe("username");
             expect(json.error.issues[0].message).toBe(
                 ZOD_ERROR_MESSAGES.REQUIRED,
             );
@@ -42,26 +42,28 @@ describe("items routes", () => {
     });
 
     const id = "507f191e810c19729de860ea";
-    const name = "Learn vitest";
+    const username = "someuser";
     let newId = "";
 
-    it("post /items creates an item", async () => {
-        const response = await client.items.$post({
+    it("post /users creates a user", async () => {
+        const response = await client.users.$post({
             json: {
-                name,
-                description: "some description",
+                username,
+                email: "someuser@github.com",
+                timezone: "America/New_York",
+                roles: [],
             },
         });
         expect(response.status).toBe(201);
         if (response.status === 201) {
             const json = await response.json();
-            expect(json.name).toBe(name);
+            expect(json.username).toBe(username);
             newId = json._id;
         }
     });
 
-    it("get /items lists all items", async () => {
-        const response = await client.items.$get();
+    it("get /users lists all users", async () => {
+        const response = await client.users.$get();
         expect(response.status).toBe(200);
         if (response.status === 200) {
             const json = await response.json();
@@ -71,8 +73,8 @@ describe("items routes", () => {
         }
     });
 
-    it("get /items/{id} validates the id param", async () => {
-        const response = await client.items[":id"].$get({
+    it("get /users/{id} validates the id param", async () => {
+        const response = await client.users[":id"].$get({
             param: {
                 id: "wat",
             },
@@ -84,8 +86,8 @@ describe("items routes", () => {
         }
     });
 
-    it("get /items/{id} returns 404 when item not found", async () => {
-        const response = await client.items[":id"].$get({
+    it("get /users/{id} returns 404 when user not found", async () => {
+        const response = await client.users[":id"].$get({
             param: {
                 id: "999999999999999999999999",
             },
@@ -97,8 +99,8 @@ describe("items routes", () => {
         }
     });
 
-    it("get /items/{id} gets a single item", async () => {
-        const response = await client.items[":id"].$get({
+    it("get /users/{id} gets a single user", async () => {
+        const response = await client.users[":id"].$get({
             param: {
                 id: newId,
             },
@@ -106,29 +108,29 @@ describe("items routes", () => {
         expect(response.status).toBe(200);
         if (response.status === 200) {
             const json = await response.json();
-            expect(json.name).toBe(name);
+            expect(json.username).toBe(username);
         }
     });
 
-    it("patch /items/{id} validates the body when updating", async () => {
-        const response = await client.items[":id"].$patch({
+    it("patch /users/{id} validates the body when updating", async () => {
+        const response = await client.users[":id"].$patch({
             param: {
                 id: newId,
             },
             json: {
-                name: "",
+                email: "intentional",
             },
         });
         expect(response.status).toBe(422);
         if (response.status === 422) {
             const json = await response.json();
-            expect(json.error.issues[0].path[0]).toBe("name");
-            expect(json.error.issues[0].code).toBe(ZodIssueCode.too_small);
+            expect(json.error.issues[0].path[0]).toBe("email");
+            expect(json.error.issues[0].code).toBe(ZodIssueCode.invalid_string);
         }
     });
 
-    it("patch /items/{id} validates the id param", async () => {
-        const response = await client.items[":id"].$patch({
+    it("patch /users/{id} validates the id param", async () => {
+        const response = await client.users[":id"].$patch({
             param: {
                 id: "wat",
             },
@@ -141,8 +143,8 @@ describe("items routes", () => {
         }
     });
 
-    it("patch /items/{id} validates empty body", async () => {
-        const response = await client.items[":id"].$patch({
+    it("patch /users/{id} validates empty body", async () => {
+        const response = await client.users[":id"].$patch({
             param: {
                 id: newId,
             },
@@ -160,24 +162,24 @@ describe("items routes", () => {
         }
     });
 
-    it("patch /items/{id} updates a single property of an item", async () => {
-        const response = await client.items[":id"].$patch({
+    it("patch /users/{id} updates a single property of a user", async () => {
+        const response = await client.users[":id"].$patch({
             param: {
                 id: newId,
             },
             json: {
-                description: "updated description",
+                locale: "en_us",
             },
         });
         expect(response.status).toBe(200);
         if (response.status === 200) {
             const json = await response.json();
-            expect(json.description).toBe("updated description");
+            expect(json.locale).toBe("en_us");
         }
     });
 
-    it("delete /items/{id} validates the id when deleting", async () => {
-        const response = await client.items[":id"].$delete({
+    it("delete /users/{id} validates the id when deleting", async () => {
+        const response = await client.users[":id"].$delete({
             param: {
                 id: "wat",
             },
@@ -189,8 +191,8 @@ describe("items routes", () => {
         }
     });
 
-    it("delete /items/{id} removes an item", async () => {
-        const response = await client.items[":id"].$delete({
+    it("delete /users/{id} removes a user", async () => {
+        const response = await client.users[":id"].$delete({
             param: {
                 id: newId,
             },

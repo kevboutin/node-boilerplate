@@ -122,7 +122,7 @@ class ItemRepository {
      * @returns {Promise<Array<Object>>} A Promise to return an array of matching documents.
      */
     async findByName(name) {
-        return await this.model.find({ name: name }).exec();
+        return await this.model.find({ name: name });
     }
 
     /**
@@ -133,7 +133,7 @@ class ItemRepository {
      * @returns {Promise<Array<Object>>} A Promise to return an array of matching documents.
      */
     async findByNameAndNotId(name, id) {
-        return await this.model.find({ name: name, _id: { $ne: id } }).exec();
+        return await this.model.find({ name: name, _id: { $ne: id } });
     }
 
     /**

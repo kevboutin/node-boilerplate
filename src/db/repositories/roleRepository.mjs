@@ -26,13 +26,11 @@ class RoleRepository {
      */
     async create(data, currentUser) {
         await this.model.createCollection();
-        const [record] = await this.model
-            .create([
-                {
-                    ...data,
-                },
-            ])
-            .exec();
+        const [record] = await this.model.create([
+            {
+                ...data,
+            },
+        ]);
 
         await this.auditLogRepository.log(
             {
@@ -124,7 +122,7 @@ class RoleRepository {
      * @returns {Promise<Array<Object>>} A Promise to return an array of matching documents.
      */
     async findByName(name) {
-        return await this.model.find({ name: name }).exec();
+        return await this.model.find({ name: name });
     }
 
     /**
@@ -135,7 +133,7 @@ class RoleRepository {
      * @returns {Promise<Array<Object>>} A Promise to return an array of matching documents.
      */
     async findByNameAndNotId(name, id) {
-        return await this.model.find({ name: name, _id: { $ne: id } }).exec();
+        return await this.model.find({ name: name, _id: { $ne: id } });
     }
 
     /**

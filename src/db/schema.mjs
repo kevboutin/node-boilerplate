@@ -32,10 +32,10 @@ export const insertUserSchema = z.object({
         required_error: "Email is required.",
         invalid_type_error: "Email is not valid.",
     }),
-    roles: z.array(z.object(z.string())),
+    roles: z.array(z.string()).optional(),
     locale: z.string().optional(),
     timezone: z.string().optional(),
-    verifiedEmail: z.boolean(),
+    verifiedEmail: z.boolean().optional(),
 });
 
 export const selectUserSchema = z.object({

@@ -15,7 +15,6 @@ class UserRepository {
     constructor(model) {
         this.model = model;
         this.auditLogRepository = new AuditLogRepository(AuditLog);
-        this.connection = connection;
     }
 
     /**
@@ -27,13 +26,11 @@ class UserRepository {
      */
     async create(data, currentUser) {
         await this.model.createCollection();
-        const [record] = await this.model
-            .create([
-                {
-                    ...data,
-                },
-            ])
-            .exec();
+        const [record] = await this.model.create([
+            {
+                ...data,
+            },
+        ]);
 
         await this.auditLogRepository.log(
             {

@@ -28,6 +28,7 @@ const EnvSchema = z
         DB_NAME: z.string(),
         DB_READ_PREF: ReadPreferenceSchema,
         DB_SOCKET_TIMEOUT: z.coerce.number().optional(),
+        LOG_LEVEL: z.string().optional(),
     })
     .superRefine((input, ctx) => {
         if (input.NODE_ENV === "production" && !input.DB_URL) {

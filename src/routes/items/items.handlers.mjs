@@ -17,7 +17,7 @@ export const list = async (c) => {
     try {
         const result = await Promise.resolve(itemRepository.findAndCountAll());
         const { count, rows } = result;
-        console.log(`list: Found ${count} items.`);
+        console.log(`list: Found ${count} item(s).`);
         return c.json({ count, rows });
     } catch (error) {
         console.error(`list: Unable to query successfully.`, error);
@@ -64,7 +64,6 @@ export const getOne = async (c) => {
             HttpStatusCodes.BAD_REQUEST,
         );
     }
-
     try {
         const item = await itemRepository.findById(id);
         if (!item) {

@@ -37,10 +37,7 @@ export const create = createRoute({
     },
     tags,
     responses: {
-        [HttpStatusCodes.OK]: jsonContent(
-            selectRolesSchema,
-            "The created user",
-        ),
+        [HttpStatusCodes.OK]: jsonContent(selectUserSchema, "The created user"),
         [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
             createErrorSchema(insertUserSchema),
             "The validation error(s)",

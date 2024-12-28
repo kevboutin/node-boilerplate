@@ -37,10 +37,7 @@ export const create = createRoute({
     },
     tags,
     responses: {
-        [HttpStatusCodes.OK]: jsonContent(
-            selectRolesSchema,
-            "The created role",
-        ),
+        [HttpStatusCodes.OK]: jsonContent(selectRoleSchema, "The created role"),
         [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
             createErrorSchema(insertRoleSchema),
             "The validation error(s)",
@@ -80,10 +77,7 @@ export const patch = createRoute({
     },
     tags,
     responses: {
-        [HttpStatusCodes.OK]: jsonContent(
-            selectRolesSchema,
-            "The updated role",
-        ),
+        [HttpStatusCodes.OK]: jsonContent(selectRoleSchema, "The updated role"),
         [HttpStatusCodes.NOT_FOUND]: jsonContent(
             notFoundSchema,
             "Role not found",
