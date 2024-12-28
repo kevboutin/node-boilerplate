@@ -13,8 +13,10 @@
     "license": "MIT",
     "scripts": {
         "audit": "npm audit fix",
+        "commit-msg": "commitlint --config commitlint.config.mjs --edit $1",
         "dev": "NODE_ENV=development node src/index.mjs",
         "pre-commit": "npm run lint && npm run test:lint",
+        "prepare": "git config --local core.hooksPath .githooks",
         "lint": "npx prettier -c **/*.*js",
         "lint:fix": "npx prettier --write **/*.*js",
         "release:tag": "git tag $npm_package_version && git push --tags",
