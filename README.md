@@ -33,6 +33,7 @@ PORT=3000
 DB_NAME=items
 DB_URL=mongodb://127.0.0.1:27017/
 LOG_LEVEL=info
+CORS_ORIGIN=*
 ```
 
 ## Documentation
@@ -87,10 +88,12 @@ npm run test
 - OpenAPI + Scalar documentation
 - Request validation and sanitization
 - Error handling middleware
+- Security response headers
+- GZip compression
 - JWT authentication (WIP)
 - Role-based access control (RBAC) (WIP)
 - Rate limiting (WIP)
-- CORS support (WIP)
+- CORS support
 
 ### Developer Experience
 

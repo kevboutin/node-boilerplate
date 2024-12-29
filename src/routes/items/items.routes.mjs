@@ -13,7 +13,12 @@ import {
     createErrorSchema,
     IdParamsSchema,
 } from "../../openapi/schemas/index.mjs";
-import { notFoundSchema, badRequestSchema } from "../../constants.mjs";
+import {
+    notFoundSchema,
+    badRequestSchema,
+    timeoutErrorSchema,
+    unauthorizedSchema,
+} from "../../constants.mjs";
 
 const tags = ["items"];
 
@@ -25,6 +30,14 @@ export const list = createRoute({
         [HttpStatusCodes.OK]: jsonContent(
             z.object({ count: z.number(), rows: z.array(selectItemSchema) }),
             "The list of items",
+        ),
+        [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
+            unauthorizedSchema,
+            "The request is not authorized",
+        ),
+        [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
+            timeoutErrorSchema,
+            "The request timed out",
         ),
     },
 });
@@ -41,9 +54,17 @@ export const create = createRoute({
             selectItemSchema,
             "The created item",
         ),
+        [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
+            unauthorizedSchema,
+            "The request is not authorized",
+        ),
         [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
             createErrorSchema(insertItemSchema),
             "The validation error(s)",
+        ),
+        [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
+            timeoutErrorSchema,
+            "The request timed out",
         ),
     },
 });
@@ -64,6 +85,10 @@ export const getOne = createRoute({
             badRequestSchema,
             "The request is not valid",
         ),
+        [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
+            unauthorizedSchema,
+            "The request is not authorized",
+        ),
         [HttpStatusCodes.NOT_FOUND]: jsonContent(
             notFoundSchema,
             "Item not found",
@@ -71,6 +96,10 @@ export const getOne = createRoute({
         [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
             createErrorSchema(IdParamsSchema),
             "Invalid identifier error",
+        ),
+        [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
+            timeoutErrorSchema,
+            "The request timed out",
         ),
     },
 });
@@ -89,6 +118,10 @@ export const patch = createRoute({
             badRequestSchema,
             "The request is not valid",
         ),
+        [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
+            unauthorizedSchema,
+            "The request is not authorized",
+        ),
         [HttpStatusCodes.NOT_FOUND]: jsonContent(
             notFoundSchema,
             "Item not found",
@@ -98,6 +131,10 @@ export const patch = createRoute({
                 createErrorSchema(IdParamsSchema),
             ),
             "The validation error(s)",
+        ),
+        [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
+            timeoutErrorSchema,
+            "The request timed out",
         ),
     },
 });
@@ -117,6 +154,10 @@ export const remove = createRoute({
             badRequestSchema,
             "The request is not valid",
         ),
+        [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
+            unauthorizedSchema,
+            "The request is not authorized",
+        ),
         [HttpStatusCodes.NOT_FOUND]: jsonContent(
             notFoundSchema,
             "Item not found",
@@ -124,6 +165,10 @@ export const remove = createRoute({
         [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
             createErrorSchema(IdParamsSchema),
             "Invalid identifier error",
+        ),
+        [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
+            timeoutErrorSchema,
+            "The request timed out",
         ),
     },
 });

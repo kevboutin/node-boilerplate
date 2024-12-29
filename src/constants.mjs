@@ -18,6 +18,11 @@ export const badRequestSchema = createMessageObjectSchema(
     HttpStatusCodes.BAD_REQUEST,
 );
 
+export const unauthorizedSchema = createMessageObjectSchema(
+    HttpStatusPhrases.UNAUTHORIZED,
+    HttpStatusCodes.UNAUTHORIZED,
+);
+
 export const notFoundSchema = createMessageObjectSchema(
     HttpStatusPhrases.NOT_FOUND,
     HttpStatusCodes.NOT_FOUND,
@@ -26,4 +31,9 @@ export const notFoundSchema = createMessageObjectSchema(
 export const serverErrorSchema = createMessageObjectSchema(
     HttpStatusPhrases.INTERNAL_SERVER_ERROR,
     HttpStatusCodes.INTERNAL_SERVER_ERROR,
+);
+
+export const timeoutErrorSchema = createMessageObjectSchema(
+    HttpStatusPhrases.GATEWAY_TIMEOUT,
+    HttpStatusCodes.GATEWAY_TIMEOUT,
 );

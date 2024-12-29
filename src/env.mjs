@@ -18,6 +18,7 @@ const EnvSchema = z
     .object({
         NODE_ENV: z.string().default("development"),
         PORT: z.coerce.number().default(3000),
+        CORS_ORIGIN: z.string().optional(),
         DB_URL: z.string().url(),
         DB_AUTH_TOKEN: z.string().optional(),
         DB_BUFFER_COMMANDS: z.boolean().optional(),
@@ -39,6 +40,15 @@ const EnvSchema = z
         ]),
     })
     .superRefine((input, ctx) => {
+        if (input.NODE_ENV === "production" && !input.CORS_ORIGIN) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.invalid_type,
+                expected: "string",
+                received: "undefined",
+                path: ["CORS_ORIGIN"],
+                message: "Must be set when NODE_ENV is 'production'",
+            });
+        }
         if (input.NODE_ENV === "production" && !input.DB_URL) {
             ctx.addIssue({
                 code: z.ZodIssueCode.invalid_type,

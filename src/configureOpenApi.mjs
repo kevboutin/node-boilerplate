@@ -7,7 +7,7 @@ export default function configureOpenAPI(app) {
         openapi: "3.0.0",
         info: {
             version: packageJSON.version,
-            title: "Items API",
+            title: "node-boilerplate API",
         },
     });
 
