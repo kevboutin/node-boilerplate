@@ -38,7 +38,7 @@ CORS_ORIGIN=*
 
 ## Documentation
 
-API documentation can be found at http://localhost:3000/reference with the raw OpenAPI specification at http://localhost:3000/doc. I would recommend using the reference URL to use the API or writing a client.
+API documentation can be found at http://localhost:3000/reference with the raw OpenAPI specification at http://localhost:3000/doc. I would recommend using the reference URL to use the API.
 
 ## Testing
 
