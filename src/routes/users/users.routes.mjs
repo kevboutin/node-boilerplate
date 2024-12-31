@@ -17,6 +17,7 @@ import {
     notFoundSchema,
     badRequestSchema,
     timeoutErrorSchema,
+    tooManyRequestsSchema,
     unauthorizedSchema,
 } from "../../constants.mjs";
 
@@ -34,6 +35,10 @@ export const list = createRoute({
         [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
             unauthorizedSchema,
             "The request is not authorized",
+        ),
+        [HttpStatusCodes.TOO_MANY_REQUESTS]: jsonContent(
+            tooManyRequestsSchema,
+            "Too many requests",
         ),
         [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
             timeoutErrorSchema,
@@ -61,6 +66,10 @@ export const create = createRoute({
         [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
             createErrorSchema(insertUserSchema),
             "The validation error(s)",
+        ),
+        [HttpStatusCodes.TOO_MANY_REQUESTS]: jsonContent(
+            tooManyRequestsSchema,
+            "Too many requests",
         ),
         [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
             timeoutErrorSchema,
@@ -97,6 +106,10 @@ export const getOne = createRoute({
             createErrorSchema(IdParamsSchema),
             "Invalid identifier error",
         ),
+        [HttpStatusCodes.TOO_MANY_REQUESTS]: jsonContent(
+            tooManyRequestsSchema,
+            "Too many requests",
+        ),
         [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
             timeoutErrorSchema,
             "The request timed out",
@@ -132,6 +145,10 @@ export const patch = createRoute({
             ),
             "The validation error(s)",
         ),
+        [HttpStatusCodes.TOO_MANY_REQUESTS]: jsonContent(
+            tooManyRequestsSchema,
+            "Too many requests",
+        ),
         [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
             timeoutErrorSchema,
             "The request timed out",
@@ -165,6 +182,10 @@ export const remove = createRoute({
         [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
             createErrorSchema(IdParamsSchema),
             "Invalid identifier error",
+        ),
+        [HttpStatusCodes.TOO_MANY_REQUESTS]: jsonContent(
+            tooManyRequestsSchema,
+            "Too many requests",
         ),
         [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
             timeoutErrorSchema,

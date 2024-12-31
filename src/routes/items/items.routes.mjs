@@ -17,6 +17,7 @@ import {
     notFoundSchema,
     badRequestSchema,
     timeoutErrorSchema,
+    tooManyRequestsSchema,
     unauthorizedSchema,
 } from "../../constants.mjs";
 
@@ -34,6 +35,10 @@ export const list = createRoute({
         [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
             unauthorizedSchema,
             "The request is not authorized",
+        ),
+        [HttpStatusCodes.TOO_MANY_REQUESTS]: jsonContent(
+            tooManyRequestsSchema,
+            "Too many requests",
         ),
         [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
             timeoutErrorSchema,

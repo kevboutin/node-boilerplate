@@ -8,6 +8,8 @@ import { notFound } from "./middleware/notFound.mjs";
 import { onError } from "./middleware/onError.mjs";
 import { pinoLogger } from "./middleware/pinoLogger.mjs";
 import env from "./env.mjs";
+import * as HttpStatusCodes from "./httpStatusCodes.mjs";
+import * as HttpStatusPhrases from "./httpStatusPhrases.mjs";
 import defaultHook from "./openapi/defaultHook.mjs";
 
 export function createRouter() {
@@ -24,7 +26,14 @@ export default function createApp() {
             windowMs: 15 * 60 * 1000, // 15 minutes
             limit: 100, // Limit each IP address to 100 requests per `window` (here, per 15 minutes).
             standardHeaders: "draft-6", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-            keyGenerator: (_) => "3dfe321eraff06d1", // Method to generate custom identifiers for clients. Probably want the username here once JWTs are in use.
+            keyGenerator: (_) => "3dfe321eraff06d1", // Method to generate custom identifiers for clients. TODO: Probably want the username here once JWTs are in use.
+            handler: (c) => {
+                const responseMessage = {
+                    message: HttpStatusPhrases.TOO_MANY_REQUESTS,
+                    statusCode: HttpStatusCodes.TOO_MANY_REQUESTS,
+                };
+                return c.json(responseMessage);
+            },
         }),
     );
     app.use("*", async (c, next) => {

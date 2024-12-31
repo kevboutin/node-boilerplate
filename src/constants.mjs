@@ -28,6 +28,11 @@ export const notFoundSchema = createMessageObjectSchema(
     HttpStatusCodes.NOT_FOUND,
 );
 
+export const tooManyRequestsSchema = createMessageObjectSchema(
+    HttpStatusPhrases.TOO_MANY_REQUESTS,
+    HttpStatusCodes.TOO_MANY_REQUESTS,
+);
+
 export const serverErrorSchema = createMessageObjectSchema(
     HttpStatusPhrases.INTERNAL_SERVER_ERROR,
     HttpStatusCodes.INTERNAL_SERVER_ERROR,
