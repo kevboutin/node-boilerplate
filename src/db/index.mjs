@@ -129,7 +129,6 @@ class DatabaseService {
                 `${this.dbUri}${this.dbName}`,
                 this.databaseOpts,
             );
-            const connectedDbName = this.connection?.db || null;
             console.log(
                 `createConnection: Connection was created. Total of ${mongoose.connections.length} connections to host ${this.connection.host}.`,
             );
@@ -145,14 +144,12 @@ class DatabaseService {
                 `${this.dbUri}${this.dbName}`,
                 this.databaseOpts,
             );
-            const connectedDbName = this.connection?.db || null;
             console.log(
                 `createConnection: Connection was created. Total of ${mongoose.connections.length} connections to host ${this.connection.host}.`,
             );
             return this.connection;
         }
         // Connection is cached in memory so use it.
-        const connectedDbName = this.connection?.db || null;
         console.log(
             `Using cached connection. Total of ${mongoose.connections.length} connections to host ${this.connection.host}.`,
         );
@@ -194,13 +191,8 @@ class DatabaseService {
      * @param {Object} connection An optional connection to close
      * @return {Promise<Object>}
      */
-    async closeConnection(connection) {
-        if (connection) {
-            return await connection.close();
-        }
-        if (this.connection !== null) {
-            return await this.connection.close();
-        }
+    async closeConnection() {
+        mongoose.connection.close();
         return null;
     }
 }
