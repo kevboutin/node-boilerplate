@@ -72,7 +72,10 @@ class AuditLogRepository {
 
         if (filter) {
             if (filter.timestampRange) {
-                query.appendRange("timestamp", filter.timestampRange);
+                const { start, end } = filter.timestampRange;
+                if (start || end) {
+                    query.appendRange("timestamp", filter.timestampRange);
+                }
             }
             if (filter.action) {
                 query.appendEqual("action", filter.action);

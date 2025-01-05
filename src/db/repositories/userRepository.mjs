@@ -116,24 +116,24 @@ class UserRepository {
     }
 
     /**
-     * Find documents matching by name.
+     * Find documents matching by username.
      *
-     * @param {string} name The name.
+     * @param {string} username The username.
      * @returns {Promise<Array<Object>>} A Promise to return an array of matching documents.
      */
-    async findByName(name) {
-        return await this.model.find({ name: name }).exec();
+    async findByUsername(username) {
+        return await this.model.find({ username: username });
     }
 
     /**
      * Find documents matching by name and not by the identifier provided.
      *
-     * @param {string} name The name.
+     * @param {string} username The username.
      * @param {string} id The identifier.
      * @returns {Promise<Array<Object>>} A Promise to return an array of matching documents.
      */
-    async findByNameAndNotId(name, id) {
-        return await this.model.find({ name: name, _id: { $ne: id } }).exec();
+    async findByUsernameAndNotId(username, id) {
+        return await this.model.find({ username: username, _id: { $ne: id } });
     }
 
     /**

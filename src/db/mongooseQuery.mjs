@@ -146,7 +146,7 @@ class MongooseQuery {
      * @param {Array<number, number>} values The values.
      */
     appendRange(property, values) {
-        const [start, end] = values;
+        const { start, end } = values;
 
         if (start) {
             this._criteria.push({
