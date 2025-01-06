@@ -25,9 +25,9 @@ class MongooseQuery {
      * Creates an instance for querying a group of documents as a result.
      *
      * @param {Object} param
-     * @param {number|null} [limit] The database limit on results.
-     * @param {number|null} [offset] The number of results to skip.
-     * @param {number|null} [orderBy] The sort expression.
+     * @param {number} [param.limit] The database limit on results.
+     * @param {number} [param.offset] The number of results to skip.
+     * @param {number} [param.orderBy] The sort expression.
      * @returns {MongooseQuery} A new instance.
      */
     static forList({ limit = null, offset = null, orderBy = null }) {
@@ -38,9 +38,9 @@ class MongooseQuery {
      * Creates an instance for querying a group of documents as a result for autocompletion.
      *
      * @param {Object} param
-     * @param {number|null} [limit] The database limit on results.
-     * @param {number|null} [offset] The number of results to skip.
-     * @param {number|null} [orderBy] The sort expression.
+     * @param {number} [param.limit] The database limit on results.
+     * @param {number} [param.offset] The number of results to skip.
+     * @param {number} [param.orderBy] The sort expression.
      * @returns {MongooseQuery} A new instance.
      */
     static forAutocomplete({ limit = null, offset = null, orderBy = null }) {
@@ -97,7 +97,7 @@ class MongooseQuery {
      * Appends a correctly formatted identifier to the query.
      *
      * @param {string} property The property name.
-     * @param {string|number|boolean} value The value.
+     * @param {string} value The value.
      */
     appendId(property, value) {
         let id = value;
@@ -131,7 +131,7 @@ class MongooseQuery {
      * Appends a regular expression statement to the query.
      *
      * @param {string} property The property name.
-     * @param {string|number|boolean} value The value.
+     * @param {string} value The property value.
      */
     appendILike(property, value) {
         this._criteria.push({
@@ -140,24 +140,49 @@ class MongooseQuery {
     }
 
     /**
-     * Appends $gte and $lte statements to the query as a range.
+     * Append a range clause to the query.
      *
-     * @param {string} property The property name.
-     * @param {Array<number, number>} values The values.
+     * @param {string} column The property name.
+     * @param {Object} values The property values.
+     * @param {number|string|Date} [values.start] The start of the range.
+     * @param {number|string|Date} [values.end] The end of the range.
+     * @param {boolean} [usingDates] True if the values are Date objects. Defaults to false.
      */
-    appendRange(property, values) {
-        const { start, end } = values;
+    appendRange(column, value, usingDates = false) {
+        const { start, end } = value;
 
-        if (start) {
-            this._criteria.push({
-                [property]: { $gte: start },
-            });
-        }
+        if (usingDates) {
+            if (start) {
+                this._criteria.push({
+                    [column]: {
+                        $gte: new Date(start),
+                    },
+                });
+            }
 
-        if (end) {
-            this._criteria.push({
-                [property]: { $lte: end },
-            });
+            if (end) {
+                this._criteria.push({
+                    [column]: {
+                        $lte: new Date(end),
+                    },
+                });
+            }
+        } else {
+            if (start) {
+                this._criteria.push({
+                    [column]: {
+                        $gte: start,
+                    },
+                });
+            }
+
+            if (end) {
+                this._criteria.push({
+                    [column]: {
+                        $lte: end,
+                    },
+                });
+            }
         }
     }
 
