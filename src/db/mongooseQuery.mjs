@@ -218,7 +218,7 @@ class MongooseQuery {
         }
 
         // If there are underscores, we cannot split like we want.
-        if (orderBy.indexOf("_") === 0) orderBy = orderBy.substring(1);
+        if (orderBy.startsWith("_")) orderBy = orderBy.substring(1);
 
         let [property, order] = orderBy.split("_");
 

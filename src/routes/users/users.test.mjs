@@ -41,7 +41,6 @@ describe("users routes", () => {
         }
     });
 
-    const id = "507f191e810c19729de860ea";
     const username = "someuser";
     let newId = "";
 

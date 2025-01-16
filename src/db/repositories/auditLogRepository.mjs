@@ -1,5 +1,4 @@
 import MongooseQuery from "../mongooseQuery.mjs";
-//import { AuditLog } from "../models/index.mjs";
 
 /**
  * @class AuditLogRepository
@@ -86,7 +85,7 @@ class AuditLogRepository {
             if (filter.createdByEmail) {
                 query.appendILike("createdByEmail", filter.createdByEmail);
             }
-            if (filter.entityNames && filter.entityNames.length) {
+            if (filter?.entityNames?.length) {
                 query.appendIn("entityName", filter.entityNames);
             }
         }
