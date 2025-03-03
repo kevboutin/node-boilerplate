@@ -157,7 +157,7 @@ class UserRepository {
         const query = MongooseQuery.forList({
             limit,
             offset,
-            orderBy: orderBy || "username",
+            orderBy: orderBy ?? "username",
         });
 
         if (filter) {

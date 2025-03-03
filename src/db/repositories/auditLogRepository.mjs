@@ -66,7 +66,7 @@ class AuditLogRepository {
         const query = MongooseQuery.forList({
             limit,
             offset,
-            orderBy: orderBy || "createdAt_DESC",
+            orderBy: orderBy ?? "createdAt_DESC",
         });
 
         if (filter) {

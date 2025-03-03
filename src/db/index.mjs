@@ -42,9 +42,10 @@ class DatabaseService {
      * Creates a DatabaseService.
      *
      * @constructor
-     * @param {string} dbUri The database URI.
-     * @param {DatabaseOptions} databaseOpts The DatabaseOptions.
-     * @param {string} dbName The database name.
+     * @param {Object} params The parameters.
+     * @param {string} params.dbUri The database URI.
+     * @param {DatabaseOptions} params.databaseOpts The DatabaseOptions.
+     * @param {string} params.dbName The database name.
      */
     constructor({ dbUri, databaseOpts, dbName }) {
         this.dbUri = dbUri;
@@ -107,10 +108,8 @@ class DatabaseService {
             console.log(
                 `createConnection: Creating test connection with uri=${this.dbUri}`,
             );
-            this.connection = await mongoose.connect(
-                this.dbUri,
-                this.databaseOpts,
-            );
+            await mongoose.connect(this.dbUri, this.databaseOpts);
+            this.connection = mongoose.connection;
             return this.connection;
         }
         if (!this.dbUri) {
@@ -125,12 +124,13 @@ class DatabaseService {
             console.log(
                 `createConnection: Creating new connection and caching it to ${secureUri}.`,
             );
-            this.connection = await mongoose.connect(
+            await mongoose.connect(
                 `${this.dbUri}${this.dbName}`,
                 this.databaseOpts,
             );
+            this.connection = mongoose.connection;
             console.log(
-                `createConnection: Connection was created. Total of ${mongoose.connections.length} connections to host ${this.connection.host}.`,
+                `createConnection: Connection was created. Total of ${mongoose.connections.length} connections to host ${this.connection?.host}.`,
             );
             return this.connection;
         }
@@ -140,18 +140,19 @@ class DatabaseService {
             console.log(
                 `createConnection: Connection is not alive, creating new connection and caching it to ${secureUri}.`,
             );
-            this.connection = await mongoose.connect(
+            await mongoose.connect(
                 `${this.dbUri}${this.dbName}`,
                 this.databaseOpts,
             );
+            this.connection = mongoose.connection;
             console.log(
-                `createConnection: Connection was created. Total of ${mongoose.connections.length} connections to host ${this.connection.host}.`,
+                `createConnection: Connection was created. Total of ${mongoose.connections.length} connections to host ${this.connection?.host}.`,
             );
             return this.connection;
         }
         // Connection is cached in memory so use it.
         console.log(
-            `Using cached connection. Total of ${mongoose.connections.length} connections to host ${this.connection.host}.`,
+            `Using cached connection. Total of ${mongoose.connections.length} connections to host ${this.connection?.host}.`,
         );
         return this.connection;
     }
@@ -186,10 +187,9 @@ class DatabaseService {
     }
 
     /**
-     * If connection is passed, close connection; else close the cached connection.
+     * Close the cached connection.
      *
-     * @param {Object} connection An optional connection to close
-     * @return {Promise<Object>}
+     * @return {null}
      */
     async closeConnection() {
         mongoose.connection.close();

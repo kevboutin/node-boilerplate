@@ -157,7 +157,7 @@ class RoleRepository {
         const query = MongooseQuery.forList({
             limit,
             offset,
-            orderBy: orderBy || "name",
+            orderBy: orderBy ?? "name",
         });
 
         if (filter) {
