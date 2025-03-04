@@ -16,6 +16,7 @@ import {
 import {
     notFoundSchema,
     badRequestSchema,
+    serverErrorSchema,
     timeoutErrorSchema,
     tooManyRequestsSchema,
     unauthorizedSchema,
@@ -39,6 +40,10 @@ export const list = createRoute({
         [HttpStatusCodes.TOO_MANY_REQUESTS]: jsonContent(
             tooManyRequestsSchema,
             "Too many requests",
+        ),
+        [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
+            serverErrorSchema,
+            "There was a server error",
         ),
         [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
             timeoutErrorSchema,
@@ -66,6 +71,10 @@ export const create = createRoute({
         [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
             createErrorSchema(insertItemSchema),
             "The validation error(s)",
+        ),
+        [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
+            serverErrorSchema,
+            "There was a server error",
         ),
         [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
             timeoutErrorSchema,
@@ -102,6 +111,10 @@ export const getOne = createRoute({
             createErrorSchema(IdParamsSchema),
             "Invalid identifier error",
         ),
+        [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
+            serverErrorSchema,
+            "There was a server error",
+        ),
         [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
             timeoutErrorSchema,
             "The request timed out",
@@ -137,6 +150,10 @@ export const patch = createRoute({
             ),
             "The validation error(s)",
         ),
+        [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
+            serverErrorSchema,
+            "There was a server error",
+        ),
         [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
             timeoutErrorSchema,
             "The request timed out",
@@ -170,6 +187,10 @@ export const remove = createRoute({
         [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
             createErrorSchema(IdParamsSchema),
             "Invalid identifier error",
+        ),
+        [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
+            serverErrorSchema,
+            "There was a server error",
         ),
         [HttpStatusCodes.GATEWAY_TIMEOUT]: jsonContent(
             timeoutErrorSchema,

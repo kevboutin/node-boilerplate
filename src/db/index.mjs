@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import env from "../env.mjs";
 
 /** @type {boolean} */
-const DB_BUFFER_COMMANDS = env.DB_BUFFER_COMMANDS === "true";
+const DB_BUFFER_COMMANDS = String(env.DB_BUFFER_COMMANDS) === "true";
 
 /**
  * Database options.
