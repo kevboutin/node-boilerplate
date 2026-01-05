@@ -39,7 +39,7 @@
         "zod": "^4.2.0"
     },
     "devDependencies": {
-        "@commitlint/cli": "^20.2.0",
+        "@commitlint/cli": "^20.3.0",
         "@commitlint/config-conventional": "^20.2.0",
         "@vitest/coverage-v8": "^4.0.16",
         "cross-env": "^10.1.0",
