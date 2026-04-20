@@ -30,7 +30,7 @@
         "@scalar/hono-api-reference": "^0.10.9",
         "dotenv": "^17.4.2",
         "dotenv-expand": "^13.0.0",
-        "hono": "^4.12.12",
+        "hono": "^4.12.14",
         "hono-pino": "^0.10.3",
         "hono-rate-limiter": "^0.5.3",
         "mongoose": "^9.4.1",
