@@ -7,6 +7,8 @@ describe("DatabaseService", () => {
     const mockDbUri = "mongodb://localhost:27017/";
     const mockDbName = "testdb";
     const mockOptions = { bufferCommands: true };
+    const originalMongooseConnection = mongoose.connection;
+    const originalMongooseConnections = mongoose.connections;
 
     beforeEach(() => {
         dbService = new DatabaseService({
@@ -18,7 +20,11 @@ describe("DatabaseService", () => {
 
     afterEach(async () => {
         await dbService.closeConnection();
+        process.env.NODE_ENV = "test";
+        mongoose.connection = originalMongooseConnection;
+        mongoose.connections = originalMongooseConnections;
         vi.clearAllMocks();
+        vi.restoreAllMocks();
     });
 
     describe("constructor", () => {
@@ -73,6 +79,74 @@ describe("DatabaseService", () => {
             const connection = await dbService.createConnection();
             expect(connection).toBeDefined();
             expect(mongoose.connections.length).toBeGreaterThan(0);
+        });
+
+        it("should create production connection when no cached connection exists", async () => {
+            process.env.NODE_ENV = "production";
+            const connectSpy = vi
+                .spyOn(mongoose, "connect")
+                .mockResolvedValue();
+            const connectionMock = {
+                host: "production-host",
+                readyState: 1,
+                close: vi.fn(),
+            };
+            mongoose.connection = connectionMock;
+            mongoose.connections = [connectionMock];
+
+            dbService.connection = null;
+            const connection = await dbService.createConnection();
+
+            expect(connectSpy).toHaveBeenCalledWith(
+                `${mockDbUri}${mockDbName}`,
+                expect.any(Object),
+            );
+            expect(connection).toBe(connectionMock);
+        });
+
+        it("should reuse cached production connection when connection is alive", async () => {
+            process.env.NODE_ENV = "production";
+            const connectSpy = vi
+                .spyOn(mongoose, "connect")
+                .mockResolvedValue();
+            const cachedConnection = {
+                host: "cached-host",
+                readyState: 1,
+                close: vi.fn(),
+            };
+            dbService.connection = cachedConnection;
+            mongoose.connections = [cachedConnection];
+            mongoose.connection = cachedConnection;
+
+            const connection = await dbService.createConnection();
+
+            expect(connectSpy).not.toHaveBeenCalled();
+            expect(connection).toBe(cachedConnection);
+        });
+
+        it("should recreate production connection when cached connection is not alive", async () => {
+            process.env.NODE_ENV = "production";
+            const connectSpy = vi
+                .spyOn(mongoose, "connect")
+                .mockResolvedValue();
+            const staleConnection = { readyState: 0 };
+            const newConnection = {
+                host: "reconnected-host",
+                readyState: 1,
+                close: vi.fn(),
+            };
+            dbService.connection = staleConnection;
+            mongoose.connection = newConnection;
+            mongoose.connections = [newConnection];
+
+            const connection = await dbService.createConnection();
+
+            expect(newConnection.close).toHaveBeenCalled();
+            expect(connectSpy).toHaveBeenCalledWith(
+                `${mockDbUri}${mockDbName}`,
+                expect.any(Object),
+            );
+            expect(connection).toBe(newConnection);
         });
     });
 
