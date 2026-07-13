@@ -45,7 +45,7 @@
         "cross-env": "^10.1.0",
         "lint-staged": "^17.0.8",
         "mongodb-memory-server": "^11.2.0",
-        "prettier": "^3.9.4",
+        "prettier": "^3.9.5",
         "vitest": "^4.1.10"
     }
 }
